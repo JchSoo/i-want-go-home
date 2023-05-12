@@ -1,6 +1,7 @@
 import tkinter
 from PIL import ImageTk
 import threading
+import tkinter.font
 
 window = tkinter.Tk()
 window.title("I want to go home")
@@ -9,19 +10,35 @@ window.resizable(False, False)
 
 count = 0
 state = ""
-
-top = tkinter.Label(window, text = "집에 가고 싶을 때 마다 누르는 버튼")
+st = ""
+font1=tkinter.font.Font(family="맑은 고딕", size=20, weight='bold')
+top = tkinter.Label(window, text = "집에 가고 싶을 때 마다 누르는 버튼", font = font1)
 top.pack()
 
+
 def gui():
+    font2=tkinter.font.Font(family="맑은 고딕", size=20, weight="bold")
+
+    global button
     def click():
         global count
-
-        if count < 100:
+        global st
+        global real
+        if count < 10:
             count += 1
+            check()
             middle.config(text = f"{count}번 생각함")
         
-        check()
+        if count >= 10:
+            middle.config(text = f"")
+            st = "1"
+            button.configure(state = 'disabled')
+            real = tkinter.Label(window, text = "되겠냐?", font = font2, state="active", activeforeground="red")
+            real.pack()
+            update(0)
+
+    label = tkinter.Label(window)
+    label.pack()
 
     middle = tkinter.Label(window, text = f"{count}번 생각함")
     middle.pack()
@@ -32,6 +49,32 @@ def gui():
     myimage = ImageTk.PhotoImage(file = "./image/door0.png")
     bottom = tkinter.Label(window, image = myimage)
     bottom.pack()
+
+    def update(ind):
+        global myimage
+        global count
+        global st
+        global real
+        
+        ind += 1
+
+        if ind < 10:
+            myimage = ImageTk.PhotoImage(file = f"./suzume/suzume-000{ind}.jpg")
+            bottom.config(image = myimage)
+        elif ind < 96:
+            myimage = ImageTk.PhotoImage(file = f"./suzume/suzume-00{ind}.jpg")
+            bottom.config(image = myimage)
+        else:
+            myimage = ImageTk.PhotoImage(file = f"./image/door0.png")
+            bottom.config(image = myimage)
+            count = 0
+            middle.config(text = f"{count}번 생각함")
+            st = ""
+            button.configure(state = 'normal')
+            real.pack_forget()
+            return
+        
+        window.after(40, update, ind)
 
     def ChangeImage(num):
         global myimage
@@ -44,9 +87,10 @@ def gui():
         bottom.config(image = myimage)
 
     def dec():
+        global st
         global count
         
-        if count > 0:
+        if count > 0 and st == "":
             count -= 1
             check()
             middle.config(text = f"{count}번 생각함")
@@ -56,7 +100,7 @@ def gui():
     def check():
         global count
         global state
-        thiscase = count // 10
+        thiscase = (count // 2) * 2
 
         if state != thiscase:
             ChangeImage(thiscase)
@@ -65,4 +109,5 @@ def gui():
 
     window.mainloop()
 
-gui()
+if __name__ == '__main__':
+    gui()
