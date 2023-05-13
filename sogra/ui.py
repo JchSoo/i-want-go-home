@@ -3,27 +3,32 @@ from PIL import ImageTk
 from tkinter import ttk
 import threading
 import tkinter.font
+# from playsound import playsound
 
 window = tkinter.Tk()
 window.title("I want to go home")
 window.geometry("800x480+375+150")
 window.resizable(False, False)
-count = 0 #클릭 횟수
-nowstate = 0 #현재이미지번호?
-gifplaying = False #스즈메 진행중?
+count = 0 
+nowstate = 0 
+gifplaying = False
 font1=tkinter.font.Font(family="맑은 고딕", size=20, weight='bold')
 top = tkinter.Label(window, text = "집에 가고 싶을 때 마다 누르는 버튼", font = font1)
 top.pack()
+level = 1
+cnt = 0
 
 def gui():
     global button
+    global level
+    global cnt 
 
     def click():
         global count
         global gifplaying
         global real
         if count < 100:
-            count += 1
+            count += 10
             check()
             prog_bar["value"] = count
             prog_bar.update()
@@ -45,7 +50,7 @@ def gui():
     prog_bar = ttk.Progressbar(window, length=300, maximum=100)
     prog_bar.pack()
 
-    button = tkinter.Button(window, text = "아~ 집가고 싶다~!", command = click, width=20, height=2)
+    button = tkinter.Button(window, text = f"{level}레벨 아~ 집가고 싶다~!", command = click, width=20, height=2)
     button.pack()
 
     myimage = ImageTk.PhotoImage(file = "./image/door0.png")
@@ -54,10 +59,12 @@ def gui():
     bottom.pack()
 
     def update(ind):
+        global cnt
         global myimage
         global count
         global gifplaying
         global real
+        global level
         
         ind += 1
 
@@ -79,6 +86,19 @@ def gui():
             button.configure(state = 'normal')
             real.pack_forget()
 
+            if level == 3:
+                level = 1
+                cnt += 1
+                txt = 'Re' * cnt
+                top.config(text = f"{txt}: 집에 가고 싶을 때 마다 누르는 버튼")
+                button.config(text = f"{level}레벨 아~ 집가고 싶다~!")
+                print(level)
+            else:
+                level += 1
+
+                button.config(text = f"{level}레벨 아~ 집가고 싶다~!")
+                print(level)
+
             return
         
         window.after(40, update, ind)
@@ -93,6 +113,7 @@ def gui():
     def dec():
         global gifplaying
         global count
+        global level
 
         if count > 0 and gifplaying == False: #횟수 0이상이고 스즈메 플레이 안하고 있으면
             count -= 1
@@ -100,7 +121,7 @@ def gui():
             prog_bar["value"] = count
             prog_bar.update()
 
-        tick = 1 - (count / 110)
+        tick = (4-level) - (count / 110)
         threading.Timer(tick, dec).start()
 
     def check():
