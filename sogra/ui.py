@@ -3,7 +3,7 @@ from PIL import ImageTk
 from tkinter import ttk
 import threading
 import tkinter.font
-# from playsound import playsound
+from typing import Final
 
 window = tkinter.Tk()
 window.title("I want to go home")
@@ -13,7 +13,7 @@ count = 0
 nowstate = 0 
 gifplaying = False
 font1=tkinter.font.Font(family="맑은 고딕", size=20, weight='bold')
-top = tkinter.Label(window, text = "집에 가고 싶을 때 마다 누르는 버튼", font = font1)
+top = tkinter   .Label(window, text = "집에 가고 싶을 때 마다 누르는 버튼", font = font1)
 top.pack()
 level = 1
 cnt = 0
@@ -22,13 +22,15 @@ def gui():
     global button
     global level
     global cnt 
+    up = 1
+    up: Final
 
     def click():
         global count
         global gifplaying
         global real
         if count < 100:
-            count += 10
+            count += up
             check()
             prog_bar["value"] = count
             prog_bar.update()
